@@ -37,6 +37,12 @@ explore: inventory_items {
 }
 
 explore: order_items {
+  sql_always_where: ${returned_date} is null and ${status} = 'Complete';;
+  sql_always_having: ${total_sale_price} > 200 and ${count} > 5;;
+  conditionally_filter: {
+    filters: [order_items.created_date: "2 years ago for 2 years"]
+    unless: [user_id]
+  }
   join: inventory_items {
     type: left_outer
     sql_on: ${order_items.inventory_item_id} = ${inventory_items.id} ;;
@@ -70,4 +76,9 @@ explore: products {
   }
 }
 
-explore: users {}
+explore: users {
+  conditionally_filter: {
+    filters: [users.created_date: "90 days ago for 90 days"]
+    unless: [id]
+  }
+}
